@@ -1,4 +1,4 @@
-// ConsoleApplication1.cpp: определяет точку входа для консольного приложения.
+// ConsoleApplication1.cpp: Г®ГЇГ°ГҐГ¤ГҐГ«ГїГҐГІ ГІГ®Г·ГЄГі ГўГµГ®Г¤Г  Г¤Г«Гї ГЄГ®Г­Г±Г®Г«ГјГ­Г®ГЈГ® ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГї.
 //
 
 #include "stdafx.h"
@@ -18,17 +18,9 @@ mutex mute;
 condition_variable waiter;
 
 void f1(void) {
-	unique_lock<mutex> lock(mute);
-
-	for (int i = 0; i < 50; i++) {
-		this_thread::sleep_for(chrono::milliseconds(10));
-		cout << "bbbbb\n";
-	}
-
-	lock.unlock();
-	waiter.notify_one();
-
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 100; i++) {
+		if(i + 1 == 50)
+			waiter.notify_one();
 		this_thread::sleep_for(chrono::milliseconds(10));
 		cout << "bbbbb\n";
 	}
@@ -39,9 +31,7 @@ void f1(void) {
 
 void f2(void) {
 	unique_lock<mutex> lk(mute);
-	waiter.wait(lk, []() { return true;});
-
-
+	waiter.wait(lk);
 	for (int i = 0; i < 100; i++) {
 		this_thread::sleep_for(chrono::milliseconds(10));
 		cout << "aaaaa\n";
